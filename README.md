@@ -17,6 +17,8 @@ This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDU
 By participating, you are expected to uphold this code. Please report unacceptable
 behavior to electron@github.com.
 
+New stuff, with bad commit
+
 ## Downloads
 
 Prebuilt binaries and debug symbols of Electron for Linux, Windows and macOS can
