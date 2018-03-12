@@ -4,7 +4,7 @@ notifications:
   email: false
 
 language: cpp
-compiler: clangss
+compiler: clang
 os:
   - linux
   - osx
