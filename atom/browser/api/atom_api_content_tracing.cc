@@ -28,8 +28,7 @@ struct Converter<base::trace_event::TraceConfig> {
     if (ConvertFromV8(isolate, val, &options)) {
       std::string category_filter, trace_options;
       if (options.Get("categoryFilter", &category_filter) ||
-          options.Get("traceOptions", &trace_options))
-      {
+          options.Get("traceOptions", &trace_options)) {
         *out = base::trace_event::TraceConfig(category_filter, trace_options);
         return true;
       }
