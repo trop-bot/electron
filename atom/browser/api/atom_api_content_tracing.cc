@@ -7,6 +7,7 @@
 
 #include "atom/common/native_mate_converters/callback.h"
 #include "atom/common/native_mate_converters/file_path_converter.h"
+#include "atom/common/native_mate_converters/value_converter.h"
 #include "base/bind.h"
 #include "base/files/file_util.h"
 #include "content/public/browser/tracing_controller.h"
@@ -18,20 +19,29 @@ using content::TracingController;
 
 namespace mate {
 
-template <>
+template<>
 struct Converter<base::trace_event::TraceConfig> {
   static bool FromV8(v8::Isolate* isolate,
                      v8::Local<v8::Value> val,
                      base::trace_event::TraceConfig* out) {
     Dictionary options;
-    if (!ConvertFromV8(isolate, val, &options))
-      return false;
-    std::string category_filter, trace_options;
-    if (!options.Get("categoryFilter", &category_filter) ||
-        !options.Get("traceOptions", &trace_options))
-      return false;
-    *out = base::trace_event::TraceConfig(category_filter, trace_options);
-    return true;
+    if (ConvertFromV8(isolate, val, &options)) {
+      std::string category_filter, trace_options;
+      if (options.Get("categoryFilter", &category_filter) ||
+          options.Get("traceOptions", &trace_options))
+      {
+        *out = base::trace_event::TraceConfig(category_filter, trace_options);
+        return true;
+      }
+    }
+
+    base::DictionaryValue memory_dump_config;
+    if (ConvertFromV8(isolate, val, &memory_dump_config)) {
+      *out = base::trace_event::TraceConfig(memory_dump_config);
+      return true;
+    }
+
+    return false;
   }
 };
 
