@@ -52,8 +52,6 @@ Once all child processes have acknowledged the `getCategories` request the
 ### `contentTracing.startRecording(options, callback)`
 
 * `options` Object
-  * `categoryFilter` String
-  * `traceOptions` String
 * `callback` Function
 
 Start recording on all processes.
@@ -61,6 +59,12 @@ Start recording on all processes.
 Recording begins immediately locally and asynchronously on child processes
 as soon as they receive the EnableRecording request. The `callback` will be
 called once all child processes have acknowledged the `startRecording` request.
+
+The `options` object can be in two formats.
+1. A combination of "categoryFilter" and "traceOptions".
+* `options` Object
+  * `categoryFilter` String
+  * `traceOptions` String
 
 `categoryFilter` is a filter to control what category groups should be
 traced. A filter can have an optional `-` prefix to exclude category groups
@@ -90,6 +94,9 @@ specified, recording mode is `record-until-full`.
 The trace option will first be reset to the default option (`record_mode` set to
 `record-until-full`, `enable_sampling` and `enable_systrace` set to `false`)
 before options parsed from `traceOptions` are applied on it.
+
+2. A trace config file format.
+See an example [here](https://chromium.googlesource.com/chromium/src/+/master/docs/memory-infra/memory_infra_startup_tracing.md#the-advanced-way).
 
 ### `contentTracing.stopRecording(resultFilePath, callback)`
 
