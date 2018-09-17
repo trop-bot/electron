@@ -2202,6 +2202,14 @@ describe('BrowserWindow module', () => {
         assert.equal(w.isResizable(), true)
       })
 
+      it('is Maximizable when true', () => {
+        assert.strictEqual(w.isResizable(), true)
+        w.setResizable(false)
+        assert.strictEqual(w.isMaximizable(), false)
+        w.setResizable(true)
+        assert.strictEqual(w.isMaximizable(), true)
+      })
+
       it('works for a frameless window', () => {
         w.destroy()
         w = new BrowserWindow({show: false, frame: false})
