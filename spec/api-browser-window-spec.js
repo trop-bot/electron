@@ -2183,7 +2183,7 @@ describe('BrowserWindow module', () => {
       assert.deepEqual(w.getSize(), [300, 200])
     })
 
-    describe.only('resizable state', () => {
+    describe('resizable state', () => {
       it('can be changed with resizable option', () => {
         w.destroy()
         w = new BrowserWindow({show: false, resizable: false})
