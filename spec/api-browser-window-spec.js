@@ -2183,7 +2183,7 @@ describe('BrowserWindow module', () => {
       assert.deepEqual(w.getSize(), [300, 200])
     })
 
-    describe('resizable state', () => {
+    describe.only('resizable state', () => {
       it('can be changed with resizable option', () => {
         w.destroy()
         w = new BrowserWindow({show: false, resizable: false})
@@ -2206,6 +2206,14 @@ describe('BrowserWindow module', () => {
         assert.strictEqual(w.isResizable(), true)
         w.setResizable(false)
         assert.strictEqual(w.isMaximizable(), false)
+        w.setResizable(true)
+        assert.strictEqual(w.isMaximizable(), true)
+      })
+
+      it('is Maximizable when true', () => {
+        assert.strictEqual(w.isResizable(), true)
+        w.setResizable(false)
+        assert.strictEqual(w.isMaximizable(), true)
         w.setResizable(true)
         assert.strictEqual(w.isMaximizable(), true)
       })
