@@ -25,10 +25,17 @@ LoginHandler::LoginHandler(
     net::AuthCredentials* credentials,
     const content::ResourceRequestInfo* resource_request_info)
     : credentials_(credentials),
-      auth_info_(auth_info),
+      auth_info_(new net::AuthChallengeInfo),
       auth_callback_(std::move(callback)),
       weak_factory_(this) {
   DCHECK_CURRENTLY_ON(BrowserThread::IO);
+
+  // net::AuthChallengeInfo itself is not copyable, so copy attributes
+  // so that we can use it later on.
+  auth_info_->is_proxy = auth_info.is_proxy;
+  auth_info_->challenger = auth_info.challenger;
+  auth_info_->scheme = auth_info.scheme;
+  auth_info_->realm = auth_info.realm;
 
   std::unique_ptr<base::DictionaryValue> request_details(
       new base::DictionaryValue);
