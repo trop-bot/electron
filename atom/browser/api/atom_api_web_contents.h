@@ -177,6 +177,9 @@ class WebContents : public mate::TrackableObject<WebContents>,
   bool IsFocused() const;
   void TabTraverse(bool reverse);
 
+  // Create a JS event.
+  v8::Local<v8::Object> CreateEvent();
+
   // Send messages to browser.
   bool SendIPCMessage(bool internal,
                       bool send_to_all,
