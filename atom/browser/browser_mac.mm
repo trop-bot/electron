@@ -202,14 +202,64 @@ bool Browser::UpdateUserActivityState(const std::string& type,
   return prevent_default;
 }
 
+static LSSharedFileListItemRef GetItemFromLoginItems(
+    NSURL* wantedURL,
+    LSSharedFileListRef fileList) {
+  if (wantedURL == NULL || fileList == NULL)
+    return NULL;
+
+  CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(fileList, NULL);
+  for (id itemObject in (__bridge NSArray*)listSnapshot) {
+    LSSharedFileListItemRef item = (__bridge LSSharedFileListItemRef)itemObject;
+    UInt32 resolutionFlags =
+        kLSSharedFileListNoUserInteraction | kLSSharedFileListDoNotMountVolumes;
+
+    CFURLRef currentItemURL = NULL;
+    if (@available(macOS 10.10, *))
+      currentItemURL =
+          LSSharedFileListItemCopyResolvedURL(item, resolutionFlags, NULL);
+
+    if (currentItemURL &&
+        CFEqual(currentItemURL, (__bridge CFTypeRef)(wantedURL))) {
+      CFRetain(item);
+      CFRelease(currentItemURL);
+      CFRelease(listSnapshot);
+      return item;
+    }
+    if (currentItemURL)
+      CFRelease(currentItemURL);
+  }
+
+  if (listSnapshot)
+    CFRelease(listSnapshot);
+
+  return NULL;
+}
+
+bool CheckLoginItemStatus(bool* hide_on_startup) {
+  LSSharedFileListRef list = LSSharedFileListCreate(
+      kCFAllocatorDefault, kLSSharedFileListSessionLoginItems, NULL);
+  NSURL* targetUrl = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+  LSSharedFileListItemRef item(GetItemFromLoginItems(targetUrl, list));
+
+  CFBooleanRef isHiddenRef = (CFBooleanRef)LSSharedFileListItemCopyProperty(
+      item, (CFStringRef) @"com.apple.loginitem.HideOnLaunch");
+
+  if (isHiddenRef) {
+    *hide_on_startup = CFBooleanGetValue(isHiddenRef);
+    CFRelease(isHiddenRef);
+  }
+
+  return item != NULL;
+}
+
 Browser::LoginItemSettings Browser::GetLoginItemSettings(
     const LoginItemSettings& options) {
   LoginItemSettings settings;
 #if defined(MAS_BUILD)
   settings.open_at_login = platform_util::GetLoginItemEnabled();
 #else
-  settings.open_at_login =
-      base::mac::CheckLoginItemStatus(&settings.open_as_hidden);
+  settings.open_at_login = CheckLoginItemStatus(&settings.open_as_hidden);
   settings.restore_state = base::mac::WasLaunchedAsLoginItemRestoreState();
   settings.opened_at_login = base::mac::WasLaunchedAsLoginOrResumeItem();
   settings.opened_as_hidden = base::mac::WasLaunchedAsHiddenLoginItem();
@@ -217,14 +267,84 @@ Browser::LoginItemSettings Browser::GetLoginItemSettings(
   return settings;
 }
 
+void RemoveFromLoginItems() {
+  LSSharedFileListRef list =
+      LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
+  if (list) {
+    NSURL* targetUrl =
+        [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+    if (GetItemFromLoginItems(targetUrl, list) != NULL) {
+      CFURLRef url = (__bridge CFURLRef)
+          [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+      if (url) {
+        UInt32 seed;
+        CFArrayRef items = LSSharedFileListCopySnapshot(list, &seed);
+        if (items) {
+          for (id item in (__bridge NSArray*)items) {
+            LSSharedFileListItemRef itemRef =
+                (__bridge LSSharedFileListItemRef)item;
+            if (LSSharedFileListItemResolve(itemRef, 0, &url, NULL) == noErr) {
+              if ([[(__bridge NSURL*)url path]
+                      hasPrefix:[[NSBundle mainBundle] bundlePath]])
+                LSSharedFileListItemRemove(list, itemRef);
+            }
+          }
+          CFRelease(items);
+        } else {
+          printf("No items in list of auto-loaded apps\n");
+        }
+      } else {
+        printf("Unable to find url for bundle\n");
+      }
+    }
+    CFRelease(list);
+  } else {
+    printf("Unable to access shared file list\n");
+  }
+}
+
+void AddToLoginItems(bool hide_on_startup) {
+  NSURL* url = [NSURL fileURLWithPath:[base::mac::MainBundle() bundlePath]];
+  base::ScopedCFTypeRef<LSSharedFileListRef> login_items(
+      LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL));
+  base::ScopedCFTypeRef<LSSharedFileListItemRef> item(
+      GetItemFromLoginItems(url, login_items));
+
+  if (!login_items.get()) {
+    printf("Couldn't get a Login Items list.\n");
+    return;
+  }
+
+  if (item.get())
+    RemoveFromLoginItems();
+
+  BOOL hide = hide_on_startup ? YES : NO;
+  NSDictionary* properties =
+      [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:hide]
+                                  forKey:@"com.apple.loginitem.HideOnLaunch"];
+
+  base::ScopedCFTypeRef<LSSharedFileListItemRef> new_item;
+  new_item.reset(LSSharedFileListInsertItemURL(
+      login_items, kLSSharedFileListItemLast, NULL, NULL,
+      reinterpret_cast<CFURLRef>(url),
+      reinterpret_cast<CFDictionaryRef>(properties), NULL));
+
+  if (!new_item.get())
+    printf("Couldn't insert current app into Login Items list.");
+}
+
 void Browser::SetLoginItemSettings(LoginItemSettings settings) {
 #if defined(MAS_BUILD)
   platform_util::SetLoginItemEnabled(settings.open_at_login);
 #else
   if (settings.open_at_login)
-    base::mac::AddToLoginItems(settings.open_as_hidden);
-  else
-    base::mac::RemoveFromLoginItems();
+    AddToLoginItems(settings.open_as_hidden);
+  else {
+    if (@available(macOS 10.10, *))
+      RemoveFromLoginItems();
+    else
+      base::mac::RemoveFromLoginItems();
+  }
 #endif
 }
 
