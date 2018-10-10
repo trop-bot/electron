@@ -303,42 +303,12 @@ void RemoveFromLoginItems() {
   }
 }
 
-void AddToLoginItems(bool hide_on_startup) {
-  NSURL* url = [NSURL fileURLWithPath:[base::mac::MainBundle() bundlePath]];
-  base::ScopedCFTypeRef<LSSharedFileListRef> login_items(
-      LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL));
-  base::ScopedCFTypeRef<LSSharedFileListItemRef> item(
-      GetItemFromLoginItems(url, login_items));
-
-  if (!login_items.get()) {
-    printf("Couldn't get a Login Items list.\n");
-    return;
-  }
-
-  if (item.get())
-    RemoveFromLoginItems();
-
-  BOOL hide = hide_on_startup ? YES : NO;
-  NSDictionary* properties =
-      [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:hide]
-                                  forKey:@"com.apple.loginitem.HideOnLaunch"];
-
-  base::ScopedCFTypeRef<LSSharedFileListItemRef> new_item;
-  new_item.reset(LSSharedFileListInsertItemURL(
-      login_items, kLSSharedFileListItemLast, NULL, NULL,
-      reinterpret_cast<CFURLRef>(url),
-      reinterpret_cast<CFDictionaryRef>(properties), NULL));
-
-  if (!new_item.get())
-    printf("Couldn't insert current app into Login Items list.");
-}
-
 void Browser::SetLoginItemSettings(LoginItemSettings settings) {
 #if defined(MAS_BUILD)
   platform_util::SetLoginItemEnabled(settings.open_at_login);
 #else
   if (settings.open_at_login)
-    AddToLoginItems(settings.open_as_hidden);
+    base::mac::AddToLoginItems(settings.open_as_hidden);
   else {
     if (@available(macOS 10.10, *))
       RemoveFromLoginItems();
