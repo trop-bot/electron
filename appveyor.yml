@@ -1,3 +1,24 @@
+# The config expects the following environment variables to be set:
+#  - "GN_CONFIG" Build type. One of {'debug', 'testing', 'release'}.
+#  - "GN_EXTRA_ARGS" Additional gn arguments for a build config,
+#      e.g. 'target_cpu="x86"' to build for a 32bit platform.
+#      https://gn.googlesource.com/gn/+/master/docs/reference.md#target_cpu
+#  - "ELECTRON_RELEASE" Define it to upload binaries on success.
+#  - "NPM_CONFIG_ARCH" E.g. 'x86'. Is used to build native Node.js modules.
+#  - "TARGET_ARCH" Choose from {'ia32', 'x64', 'arm', 'arm64', 'mips64el'}.
+#      Is used in some publishing scripts, but does NOT affect the Electron binary.
+#  - "UPLOAD_TO_S3" Define it to upload a release to the S3 bucket.
+#      If it's not defined the release is uploaded to the Github Releases.
+#      The value is only checked if "ELECTRON_RELEASE" is defined.
+#
+# The publishing scripts expect access tokens to be defined as env vars,
+# but those are not covered here.
+#
+# AppVeyor docs on variables:
+# https://www.appveyor.com/docs/environment-variables/
+# https://www.appveyor.com/docs/build-configuration/#secure-variables
+# https://www.appveyor.com/docs/build-configuration/#custom-environment-variables
+
 version: 1.0.{build}
 build_cloud: libcc-20
 image: libcc-20-vs2017-15.7.4
