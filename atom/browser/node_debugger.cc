@@ -36,6 +36,8 @@ void NodeDebugger::Start() {
 #endif
     // Stop handling arguments after a "--" to be consistent with Chromium
     // This is here for security reasons, do not remove
+    // Parsing args after a "--" could result in malicious URI launch attempts
+    // with "--inspect" or "--inspect-brk" resulting in a RCE
     if (nice_arg == "--")
       break;
 

@@ -3,3 +3,4 @@ console.log(JSON.stringify({
   processType: typeof process.type,
   window: typeof window
 }))
+process.exit(0)
