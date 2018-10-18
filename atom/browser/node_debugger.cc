@@ -30,10 +30,16 @@ void NodeDebugger::Start() {
   std::vector<std::string> args;
   for (auto& arg : base::CommandLine::ForCurrentProcess()->argv()) {
 #if defined(OS_WIN)
-    args.push_back(base::UTF16ToUTF8(arg));
+    const std::string nice_arg = base::UTF16ToUTF8(arg);
 #else
-    args.push_back(arg);
+    const std::string& nice_arg = arg;
 #endif
+    // Stop handling arguments after a "--" to be consistent with Chromium
+    // This is here for security reasons, do not remove
+    if (nice_arg == "--")
+      break;
+
+    args.push_back(nice_arg);
   }
 
   auto options = std::make_shared<node::DebugOptions>();
@@ -46,7 +52,6 @@ void NodeDebugger::Start() {
       node::options_parser::kDisallowedInEnvironment, &error);
 
   if (!error.empty()) {
-    // TODO(jeremy): what's the appropriate behaviour here?
     LOG(ERROR) << "Error parsing node options: " << error;
   }
 
@@ -58,9 +63,9 @@ void NodeDebugger::Start() {
   }
 
   const char* path = "";
-  inspector->Start(path, options);
-  // FIXME
-  // DCHECK(env_->inspector_agent()->IsListening());
+  if (inspector->Start(path, options)) {
+    DCHECK(env_->inspector_agent()->IsListening());
+  }
 }
 
 }  // namespace atom
