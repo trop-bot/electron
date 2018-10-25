@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-from lib import git
-from lib.patches import patch_from_dir
+from apply_patches import apply_patches
 
 
 patch_dirs = {
@@ -22,15 +21,7 @@ patch_dirs = {
 }
 
 
-def apply_patches(dirs):
-  for patch_dir, repo in dirs.iteritems():
-    git.am(repo=repo, patch_data=patch_from_dir(patch_dir),
-      committer_name="Electron Scripts", committer_email="scripts@electron")
-
-
-def main():
-  apply_patches(patch_dirs)
-
-
 if __name__ == '__main__':
-  main()
+  apply_patches(patch_dirs,
+                committer_name="Electron Scripts",
+                committer_email="scripts@electron")

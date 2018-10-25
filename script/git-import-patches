@@ -4,12 +4,12 @@ import argparse
 import os
 import sys
 
-from lib import git
-from lib.patches import patch_from_dir
+from apply_patches import apply_patches
 
 
 def main(argv):
-  parser = argparse.ArgumentParser()
+  parser = argparse.ArgumentParser(
+      description='Apply patches to the current repo')
   parser.add_argument("patch_dir",
       help="directory containing patches to apply")
   parser.add_argument("-3", "--3way",
@@ -17,11 +17,7 @@ def main(argv):
       help="use 3-way merge to resolve conflicts")
   args = parser.parse_args(argv)
 
-  git.am(
-      repo='.',
-      patch_data=patch_from_dir(args.patch_dir),
-      threeway=args.threeway
-  )
+  apply_patches({args.patch_dir: '.'}, threeway=args.threeway)
 
 
 if __name__ == '__main__':
