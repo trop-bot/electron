@@ -16,6 +16,7 @@ an issue:
 
 * [Electron FAQ](faq.md)
 
+<div id="toc">
 ## Guides and Tutorials
 
 * [Setting up the Development Environment](tutorial/development-environment.md)
@@ -75,6 +76,7 @@ an issue:
   * [Deploying an Update Server](tutorial/updates.md#deploying-an-update-server)
   * [Implementing Updates in Your App](tutorial/updates.md#implementing-updates-in-your-app)
   * [Applying Updates](tutorial/updates.md#applying-updates)
+</div>
 
 ## Detailed Tutorials
 
