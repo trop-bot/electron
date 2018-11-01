@@ -93,7 +93,6 @@ const child = proc.spawn(electron)
 Find documentation translations in [electron/i18n](https://github.com/electron/i18n).
 
 ## Community
-dskhjdshfkfdjkhfdjhkfdghjkdfghjkdfgkhjdfghjkfdgkhj
 Info on reporting bugs, getting help, finding third-party tools and sample apps,
 and more can be found in the [support document](docs/tutorial/support.md#finding-support).
 
