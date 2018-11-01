@@ -152,6 +152,7 @@ class NativeWindow : public base::SupportsUserData,
   virtual gfx::NativeView GetNativeView() const = 0;
   virtual gfx::NativeWindow GetNativeWindow() const = 0;
   virtual gfx::AcceleratedWidget GetAcceleratedWidget() const = 0;
+  virtual std::tuple<void*, int> GetNativeWindowHandlePointer() const = 0;
 
   // Taskbar/Dock APIs.
   enum ProgressState {
