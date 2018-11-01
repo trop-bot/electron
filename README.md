@@ -98,6 +98,8 @@ and more can be found in the [support document](docs/tutorial/support.md#finding
 
 ## License
 
+DO ITTTTTTTTTTTT
+
 [MIT](https://github.com/electron/electron/blob/master/LICENSE)
 
 When using the Electron or other GitHub logos, be sure to follow the [GitHub logo guidelines](https://github.com/logos).
