@@ -6,6 +6,9 @@ import re
 import subprocess
 import sys
 
+from lib.patches import format_patch, get_patch_subject, \
+                        munge_subject_to_filename
+
 
 def guess_base_commit(repo):
   """Guess which commit the patches might be based on"""
@@ -19,34 +22,6 @@ def guess_base_commit(repo):
   return subprocess.check_output(args).split('-')[0:2]
 
 
-def format_patch(repo, since):
-  args = [
-    'git',
-    '-C',
-    repo,
-    'format-patch',
-    '--keep-subject',
-    '--no-stat',
-    '--stdout',
-
-    # Per RFC 3676 the signature is separated from the body by a line with
-    # '-- ' on it. If the signature option is omitted the signature defaults
-    # to the Git version number.
-    '--no-signature',
-
-    # The name of the parent commit object isn't useful information in this
-    # context, so zero it out to avoid needless patch-file churn.
-    '--zero-commit',
-
-    # Some versions of git print out different numbers of characters in the
-    # 'index' line of patches, so pass --full-index to get consistent
-    # behaviour.
-    '--full-index',
-    since
-  ]
-  return subprocess.check_output(args)
-
-
 def split_patches(patch_data):
   """Split a concatenated series of patches into N separate patches"""
   patches = []
@@ -58,22 +33,14 @@ def split_patches(patch_data):
   return patches
 
 
-def munge_subject_to_filename(subject):
-  """Derive a suitable filename from a commit's subject"""
-  if subject.endswith('.patch'):
-    subject = subject[:-6]
-  return re.sub(r'[^A-Za-z0-9-]+', '_', subject).strip('_').lower() + '.patch'
-
-
 def get_file_name(patch):
   """Return the name of the file to which the patch should be written"""
   for line in patch:
     if line.startswith('Patch-Filename: '):
       return line[len('Patch-Filename: '):]
   # If no patch-filename header, munge the subject.
-  for line in patch:
-    if line.startswith('Subject: '):
-      return munge_subject_to_filename(line[len('Subject: '):])
+  subject = get_patch_subject(patch)
+  return munge_subject_to_filename(subject)
 
 
 def remove_patch_filename(patch):
