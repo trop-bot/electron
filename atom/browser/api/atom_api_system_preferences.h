@@ -90,6 +90,12 @@ class SystemPreferences : public mate::EventEmitter<SystemPreferences>
   void RemoveUserDefault(const std::string& name);
   bool IsSwipeTrackingFromScrollEventsEnabled();
 
+  bool HasCameraAccess();
+  bool HasMicrophoneAccess();
+  bool HasFullMediaAccess();
+
+  void AskForMediaAccess(mate::Arguments* args);
+
   // TODO(MarshallOfSound): Write tests for these methods once we
   // are running tests on a Mojave machine
   v8::Local<v8::Value> GetEffectiveAppearance(v8::Isolate* isolate);

@@ -4,12 +4,14 @@
 
 #include "atom/browser/api/atom_api_system_preferences.h"
 
+#include <iostream>
 #include <map>
 
 #import <Cocoa/Cocoa.h>
 
 #include "atom/browser/mac/atom_application.h"
 #include "atom/browser/mac/dict_util.h"
+#include "atom/browser/ui/cocoa/atom_access_controller.h"
 #include "atom/common/native_mate_converters/gurl_converter.h"
 #include "atom/common/native_mate_converters/value_converter.h"
 #include "base/strings/sys_string_conversions.h"
@@ -357,6 +359,46 @@ void SystemPreferences::SetUserDefault(const std::string& name,
   } else {
     args->ThrowError("Invalid type: " + type);
     return;
+  }
+}
+
+bool SystemPreferences::HasCameraAccess() {
+  return [[AtomAccessController sharedController] hasCameraAccess];
+}
+
+bool SystemPreferences::HasMicrophoneAccess() {
+  return [[AtomAccessController sharedController] hasMicrophoneAccess];
+}
+
+// whether the system has access to both microphone and camera
+bool SystemPreferences::HasFullMediaAccess() {
+  return [[AtomAccessController sharedController] hasFullMediaAccess];
+}
+
+// ask for access to camera and/or microphone
+void SystemPreferences::AskForMediaAccess(mate::Arguments* args) {
+  std::string media_type;
+  bool ask_again = false;
+  if (!args->GetNext(&ask_again))
+    args->ThrowError("Ask again value required");
+
+  if (args->GetNext(&media_type)) {
+    std::cout << media_type << "\n";
+    if (media_type == "microphone")
+      [[AtomAccessController sharedController] askForMicrophoneAccess];
+    else if (media_type == "camera")
+      [[AtomAccessController sharedController] askForCameraAccess];
+    else
+      args->ThrowError("Invalid media type");
+  } else {
+    [[AtomAccessController sharedController]
+        askForMediaAccess:ask_again
+               completion:^(BOOL granted) {
+                 if (granted)
+                   printf("Access granted!!\n");
+                 else
+                   printf("Access denied!\n");
+               }];
   }
 }
 
