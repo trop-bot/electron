@@ -317,3 +317,30 @@ You can use the `setAppLevelAppearance` API to set this value.
 
 Sets the appearance setting for your application, this should override the
 system default and override the value of `getEffectiveAppearance`.
+
+### `systemPreferences.hasMicrophoneAccess()` _macOS_
+
+Returns `Boolean` - `true` if the app has obtained system privacy consent to access the microphone and `false` otherwise.
+
+This user consent was not required until macOS 10.14 Mojave, so this method will always return `true` if your system is running 10.13 High Sierra or lower.
+
+### `systemPreferences.hasCameraAccess()` _macOS_
+
+Returns `Boolean` - `true` if the app has obtained system privacy consent to access the camera and `false` otherwise.
+
+This user consent was not required until macOS 10.14 Mojave, so this method will always return `true` if your system is running 10.13 High Sierra or lower.
+
+### `systemPreferences.hasFullMediaAccess()` _macOS_
+
+Returns `Boolean` - `true` if the app has obtained system privacy consent to access both the camera and the microphone, and `false` otherwise.
+
+This user consent was not required until macOS 10.14 Mojave, so this method will always return `true` if your system is running 10.13 High Sierra or lower.
+
+### `systemPreferences.askForMediaAccess(askAgain, type)` _macOS_
+
+* `askAgain` Boolean - whether or not the app should request media consent again if it is denied the first time.
+* `type` String | null - the type of media being requested; can be `microphone`, `camera`, or `null` for all media to be requested.
+
+Returns `Promise<any>` - A promise that resolves with `true` if consent was granted and `false` if it was denied.
+
+This user consent was not required until macOS 10.14 Mojave, so this method will always return `true` if your system is running 10.13 High Sierra or lower.
