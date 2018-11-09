@@ -9,6 +9,7 @@
 #include <string>
 
 #include "atom/browser/api/event_emitter.h"
+#include "atom/common/promise_util.h"
 #include "base/callback.h"
 #include "base/values.h"
 #include "native_mate/handle.h"
@@ -94,7 +95,8 @@ class SystemPreferences : public mate::EventEmitter<SystemPreferences>
   bool HasMicrophoneAccess();
   bool HasFullMediaAccess();
 
-  void AskForMediaAccess(mate::Arguments* args);
+  v8::Local<v8::Promise> AskForMediaAccess(v8::Isolate* isolate,
+                                           mate::Arguments* args);
 
   // TODO(MarshallOfSound): Write tests for these methods once we
   // are running tests on a Mojave machine

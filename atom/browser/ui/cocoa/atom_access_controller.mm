@@ -54,7 +54,7 @@
   return self;
 }
 
-- (void)askForMicrophoneAccess {
+- (void)alertForMicrophoneAccess {
   if (microphoneAccessState_ == AccessStateDenied) {
     NSAlert* alert = [[NSAlert alloc] init];
     alert.alertStyle = NSAlertStyleWarning;
@@ -71,7 +71,7 @@
   }
 }
 
-- (void)askForCameraAccess {
+- (void)alertForCameraAccess {
   if (cameraAccessState_ == AccessStateDenied) {
     NSAlert* alert = [[NSAlert alloc] init];
     alert.alertStyle = NSAlertStyleWarning;
@@ -88,7 +88,7 @@
 }
 
 - (void)askForMediaAccess:(BOOL)askAgain
-               completion:(void (^)(BOOL))allAccessGranted {
+               completion:(void (^)(BOOL))accessGranted {
   if (@available(macOS 10.14, *)) {
     [AVCaptureDevice
         requestAccessForMediaType:AVMediaTypeAudio
@@ -103,17 +103,61 @@
                                                          : AccessStateDenied;
                                 if (askAgain) {
                                   dispatch_async(dispatch_get_main_queue(), ^{
-                                    [self askForMicrophoneAccess];
-                                    [self askForCameraAccess];
+                                    [self alertForMicrophoneAccess];
+                                    [self alertForCameraAccess];
                                   });
                                 }
                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                  allAccessGranted(self.hasFullMediaAccess);
+                                  accessGranted(self.hasFullMediaAccess);
                                 });
                               }];
                 }];
   } else {
-    allAccessGranted(self.hasFullMediaAccess);
+    accessGranted(self.hasFullMediaAccess);
+  }
+}
+
+- (void)askForCameraAccess:(BOOL)askAgain
+                completion:(void (^)(BOOL))accessGranted {
+  if (@available(macOS 10.14, *)) {
+    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
+                             completionHandler:^(BOOL granted) {
+                               cameraAccessState_ = (granted)
+                                                        ? AccessStateGranted
+                                                        : AccessStateDenied;
+                               if (askAgain) {
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                   [self alertForCameraAccess];
+                                 });
+                               }
+                               dispatch_async(dispatch_get_main_queue(), ^{
+                                 accessGranted(self.hasCameraAccess);
+                               });
+                             }];
+  } else {
+    accessGranted(self.hasCameraAccess);
+  }
+}
+
+- (void)askForMicrophoneAccess:(BOOL)askAgain
+                    completion:(void (^)(BOOL))accessGranted {
+  if (@available(macOS 10.14, *)) {
+    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio
+                             completionHandler:^(BOOL granted) {
+                               microphoneAccessState_ = (granted)
+                                                            ? AccessStateGranted
+                                                            : AccessStateDenied;
+                               if (askAgain) {
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                   [self alertForMicrophoneAccess];
+                                 });
+                               }
+                               dispatch_async(dispatch_get_main_queue(), ^{
+                                 accessGranted(self.hasMicrophoneAccess);
+                               });
+                             }];
+  } else {
+    accessGranted(self.hasMicrophoneAccess);
   }
 }
 
