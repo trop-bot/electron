@@ -21,25 +21,25 @@
           [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo]) {
         case AVAuthorizationStatusAuthorized:
         case AVAuthorizationStatusRestricted:
-          cameraAccessState_ = AccessStateDenied;
+          cameraAccessState_ = AccessStateGranted;
           break;
         case AVAuthorizationStatusDenied:
           cameraAccessState_ = AccessStateDenied;
           break;
         case AVAuthorizationStatusNotDetermined:
-          cameraAccessState_ = AccessStateDenied;
+          cameraAccessState_ = AccessStateUnknown;
       }
       switch (
           [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio]) {
         case AVAuthorizationStatusAuthorized:
         case AVAuthorizationStatusRestricted:
-          microphoneAccessState_ = AccessStateDenied;
+          microphoneAccessState_ = AccessStateGranted;
           break;
         case AVAuthorizationStatusDenied:
           microphoneAccessState_ = AccessStateDenied;
           break;
         case AVAuthorizationStatusNotDetermined:
-          microphoneAccessState_ = AccessStateDenied;
+          microphoneAccessState_ = AccessStateUnknown;
       }
       [[[NSWorkspace sharedWorkspace] notificationCenter]
           addObserver:self
