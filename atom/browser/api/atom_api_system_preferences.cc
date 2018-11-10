@@ -83,6 +83,10 @@ void SystemPreferences::BuildPrototype(
                  &SystemPreferences::GetAppLevelAppearance)
       .SetMethod("setAppLevelAppearance",
                  &SystemPreferences::SetAppLevelAppearance)
+      .SetMethod("hasCameraAccess", &SystemPreferences::HasCameraAccess)
+      .SetMethod("hasMicrophoneAccess", &SystemPreferences::HasMicrophoneAccess)
+      .SetMethod("hasFullMediaAccess", &SystemPreferences::HasFullMediaAccess)
+      .SetMethod("askForMediaAccess", &SystemPreferences::AskForMediaAccess)
 #endif
       .SetMethod("isInvertedColorScheme",
                  &SystemPreferences::IsInvertedColorScheme)
