@@ -341,6 +341,6 @@ This user consent was not required until macOS 10.14 Mojave, so this method will
 * `askAgain` Boolean - whether or not the app should request media consent again if it is denied the first time.
 * `mediaType` String | null - the type of media being requested; can be `microphone`, `camera`, or `null` for all media to be requested.
 
-Returns `Promise<Boolean>` - A promise that resolves with `true` if consent was granted and `false` if it was denied.
+Returns `Promise<Boolean>` - A promise that resolves with `true` if consent was granted and `false` if it was denied. If an access request was denied and later is changed through the System Preferences pane, a restart of the app will be required for the new permissions to take effect.
 
 This user consent was not required until macOS 10.14 Mojave, so this method will always return `true` if your system is running 10.13 High Sierra or lower.
