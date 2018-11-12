@@ -384,8 +384,10 @@ v8::Local<v8::Promise> SystemPreferences::AskForMediaAccess(
   std::string media_type;
 
   bool ask_again = false;
-  if (!args->GetNext(&ask_again))
+  if (!args->GetNext(&ask_again)) {
     promise->RejectWithErrorMessage("askAgain value is required");
+    return promise->GetHandle();
+  }
 
   if (args->GetNext(&media_type)) {
     if (media_type == "microphone")
