@@ -361,19 +361,14 @@ void SystemPreferences::SetUserDefault(const std::string& name,
   }
 }
 
-// whether the system has access to camera
-bool SystemPreferences::HasCameraAccess() {
-  return [[AtomAccessController sharedController] hasCameraAccess];
-}
-
-// whether the system has access to microphone
-bool SystemPreferences::HasMicrophoneAccess() {
-  return [[AtomAccessController sharedController] hasMicrophoneAccess];
-}
-
 // whether the system has access to both microphone and camera
-bool SystemPreferences::HasFullMediaAccess() {
-  return [[AtomAccessController sharedController] hasFullMediaAccess];
+std::string SystemPreferences::GetMediaAccessStatus(
+    const std::string& mediaType) {
+  NSString* type = [NSString stringWithFormat:@"%s", mediaType.c_str()];
+
+  NSString* status = [[AtomAccessController sharedController]
+      getMediaAccessStatusForType:type];
+  return std::string([status UTF8String]);
 }
 
 // ask for access to camera and/or microphone
