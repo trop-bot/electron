@@ -91,10 +91,7 @@ class SystemPreferences : public mate::EventEmitter<SystemPreferences>
   void RemoveUserDefault(const std::string& name);
   bool IsSwipeTrackingFromScrollEventsEnabled();
 
-  bool HasCameraAccess();
-  bool HasMicrophoneAccess();
-  bool HasFullMediaAccess();
-
+  std::string GetMediaAccessStatus(const std::string& mediaType);
   v8::Local<v8::Promise> AskForMediaAccess(v8::Isolate* isolate,
                                            mate::Arguments* args);
 
