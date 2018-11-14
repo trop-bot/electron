@@ -302,7 +302,6 @@ using `electron-packager` or `electron-forge` just set the `enableDarwinDarkMode
 packager option to `true`.  See the [Electron Packager API](https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#darwindarkmodesupport)
 for more details.
 
-
 ### `systemPreferences.getAppLevelAppearance()` _macOS_
 
 Returns `String` | `null` - Can be `dark`, `light` or `unknown`.
@@ -318,28 +317,18 @@ You can use the `setAppLevelAppearance` API to set this value.
 Sets the appearance setting for your application, this should override the
 system default and override the value of `getEffectiveAppearance`.
 
-### `systemPreferences.hasMicrophoneAccess()` _macOS_
+### `systemPreferences.getMediaAccessStatus(mediaType)` _macOS_
 
-Returns `Boolean` - `true` if the app has obtained system privacy consent to access the microphone and `false` otherwise.
+* `mediaType` String - `microphone` or `camera`.
 
-This user consent was not required until macOS 10.14 Mojave, so this method will always return `true` if your system is running 10.13 High Sierra or lower.
+Returns `String` - `not-determined` | `granted` | `denied` | `restricted`
 
-### `systemPreferences.hasCameraAccess()` _macOS_
+This user consent was not required until macOS 10.14 Mojave, so this method will always return `granted` if your system is running 10.13 High Sierra or lower.
 
-Returns `Boolean` - `true` if the app has obtained system privacy consent to access the camera and `false` otherwise.
+### `systemPreferences.askForMediaAccess(mediaType, askAgain)` _macOS_
 
-This user consent was not required until macOS 10.14 Mojave, so this method will always return `true` if your system is running 10.13 High Sierra or lower.
-
-### `systemPreferences.hasFullMediaAccess()` _macOS_
-
-Returns `Boolean` - `true` if the app has obtained system privacy consent to access both the camera and the microphone, and `false` otherwise.
-
-This user consent was not required until macOS 10.14 Mojave, so this method will always return `true` if your system is running 10.13 High Sierra or lower.
-
-### `systemPreferences.askForMediaAccess(askAgain, mediaType)` _macOS_
-
-* `askAgain` Boolean - whether or not the app should request media consent again if it is denied the first time.
-* `mediaType` String | null - the type of media being requested; can be `microphone`, `camera`, or `null` for all media to be requested.
+* `mediaType` String - the type of media being requested; can be `microphone`, `camera`, or `all` for all media to be requested.
+* `askAgain` Boolean - whether or not the app should request media consent again if it is denied the first time. Defaults to `false`.
 
 Returns `Promise<Boolean>` - A promise that resolves with `true` if consent was granted and `false` if it was denied. If an access request was denied and later is changed through the System Preferences pane, a restart of the app will be required for the new permissions to take effect.
 
