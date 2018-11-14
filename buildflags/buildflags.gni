@@ -6,7 +6,7 @@ declare_args() {
   enable_desktop_capturer = true
 
   # Allow running Electron as a node binary.
-  enable_run_as_node = true
+  enable_run_as_node = false
 
   enable_osr = true
 
