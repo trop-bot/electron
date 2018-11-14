@@ -10,12 +10,13 @@
 typedef NS_ENUM(NSInteger, AccessState) {
   AccessStateUnknown,
   AccessStateGranted,
-  AccessStateDenied
+  AccessStateDenied,
+  AccessStateRestricted
 };
 
 @interface AtomAccessController : NSObject {
-  AccessState microphoneAccessState_;
-  AccessState cameraAccessState_;
+  AccessState microphoneAccessStatus_;
+  AccessState cameraAccessStatus_;
 }
 
 + (instancetype)sharedController;
@@ -30,9 +31,11 @@ typedef NS_ENUM(NSInteger, AccessState) {
 - (void)alertForMicrophoneAccess;
 - (void)alertForCameraAccess;
 
-- (BOOL)hasMicrophoneAccess;
-- (BOOL)hasCameraAccess;
 - (BOOL)hasFullMediaAccess;
+- (BOOL)hasCameraAccess;
+- (BOOL)hasMicrophoneAccess;
+
+- (NSString*)getMediaAccessStatusForType:(NSString*)mediaType;
 
 @end
 
