@@ -20,26 +20,30 @@
       switch (
           [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo]) {
         case AVAuthorizationStatusAuthorized:
+          cameraAccessStatus_ = AccessStateGranted;
+          break;
         case AVAuthorizationStatusRestricted:
-          cameraAccessState_ = AccessStateGranted;
+          cameraAccessStatus_ = AccessStateRestricted;
           break;
         case AVAuthorizationStatusDenied:
-          cameraAccessState_ = AccessStateDenied;
+          cameraAccessStatus_ = AccessStateDenied;
           break;
         case AVAuthorizationStatusNotDetermined:
-          cameraAccessState_ = AccessStateUnknown;
+          cameraAccessStatus_ = AccessStateUnknown;
       }
       switch (
           [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio]) {
         case AVAuthorizationStatusAuthorized:
+          microphoneAccessStatus_ = AccessStateGranted;
+          break;
         case AVAuthorizationStatusRestricted:
-          microphoneAccessState_ = AccessStateGranted;
+          microphoneAccessStatus_ = AccessStateRestricted;
           break;
         case AVAuthorizationStatusDenied:
-          microphoneAccessState_ = AccessStateDenied;
+          microphoneAccessStatus_ = AccessStateDenied;
           break;
         case AVAuthorizationStatusNotDetermined:
-          microphoneAccessState_ = AccessStateUnknown;
+          microphoneAccessStatus_ = AccessStateUnknown;
       }
       [[[NSWorkspace sharedWorkspace] notificationCenter]
           addObserver:self
@@ -48,8 +52,8 @@
                object:nil];
     } else {
       // access is always allowed pre-10.14 Mojave
-      cameraAccessState_ = AccessStateGranted;
-      microphoneAccessState_ = AccessStateGranted;
+      cameraAccessStatus_ = AccessStateGranted;
+      microphoneAccessStatus_ = AccessStateGranted;
     }
   }
   return self;
@@ -57,7 +61,7 @@
 
 // pops up an alert to change mic prefs (restart required to take effect)
 - (void)alertForMicrophoneAccess {
-  if (microphoneAccessState_ == AccessStateDenied) {
+  if (microphoneAccessStatus_ == AccessStateDenied) {
     NSAlert* alert = [[NSAlert alloc] init];
     alert.alertStyle = NSAlertStyleWarning;
     alert.messageText = @"This app needs access to the microphone.";
@@ -75,7 +79,7 @@
 
 // pops up an alert to change camera prefs (restart required to take effect)
 - (void)alertForCameraAccess {
-  if (cameraAccessState_ == AccessStateDenied) {
+  if (cameraAccessStatus_ == AccessStateDenied) {
     NSAlert* alert = [[NSAlert alloc] init];
     alert.alertStyle = NSAlertStyleWarning;
     alert.messageText = @"This app needs access to the camera.";
@@ -97,14 +101,14 @@
     [AVCaptureDevice
         requestAccessForMediaType:AVMediaTypeAudio
                 completionHandler:^(BOOL granted) {
-                  microphoneAccessState_ =
+                  microphoneAccessStatus_ =
                       (granted) ? AccessStateGranted : AccessStateDenied;
                   [AVCaptureDevice
                       requestAccessForMediaType:AVMediaTypeVideo
                               completionHandler:^(BOOL granted) {
-                                cameraAccessState_ = (granted)
-                                                         ? AccessStateGranted
-                                                         : AccessStateDenied;
+                                cameraAccessStatus_ = (granted)
+                                                          ? AccessStateGranted
+                                                          : AccessStateDenied;
                                 if (askAgain) {
                                   dispatch_async(dispatch_get_main_queue(), ^{
                                     [self alertForMicrophoneAccess];
@@ -128,9 +132,9 @@
   if (@available(macOS 10.14, *)) {
     [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
                              completionHandler:^(BOOL granted) {
-                               cameraAccessState_ = (granted)
-                                                        ? AccessStateGranted
-                                                        : AccessStateDenied;
+                               cameraAccessStatus_ = (granted)
+                                                         ? AccessStateGranted
+                                                         : AccessStateDenied;
                                if (askAgain) {
                                  dispatch_async(dispatch_get_main_queue(), ^{
                                    [self alertForCameraAccess];
@@ -152,9 +156,9 @@
   if (@available(macOS 10.14, *)) {
     [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio
                              completionHandler:^(BOOL granted) {
-                               microphoneAccessState_ = (granted)
-                                                            ? AccessStateGranted
-                                                            : AccessStateDenied;
+                               microphoneAccessStatus_ =
+                                   (granted) ? AccessStateGranted
+                                             : AccessStateDenied;
                                if (askAgain) {
                                  dispatch_async(dispatch_get_main_queue(), ^{
                                    [self alertForMicrophoneAccess];
@@ -172,23 +176,55 @@
 
 // whether or not the user has given consent for camera access
 - (BOOL)hasCameraAccess {
-  if (@available(macOS 10.14, *)) {
-    return (cameraAccessState_ == AccessStateGranted);
-  }
+  if (@available(macOS 10.14, *))
+    return (cameraAccessStatus_ == AccessStateGranted);
   return YES;
 }
 
 // whether or not the user has given consent for mic access
 - (BOOL)hasMicrophoneAccess {
-  if (@available(macOS 10.14, *)) {
-    return (microphoneAccessState_ == AccessStateGranted);
-  }
+  if (@available(macOS 10.14, *))
+    return (microphoneAccessStatus_ == AccessStateGranted);
   return YES;
 }
 
-// whether or not the user has given consent for all access
+// whether or not the user has given consent for mic access
 - (BOOL)hasFullMediaAccess {
   return (self.hasCameraAccess && self.hasMicrophoneAccess);
+}
+
+- (NSString*)getMediaAccessStatusForType:(NSString*)mediaType {
+  NSString* status = nil;
+
+  if ([mediaType isEqualToString:@"camera"])
+    status = [self accessStateToString:cameraAccessStatus_];
+  else if ([mediaType isEqualToString:@"microphone"])
+    status = [self accessStateToString:microphoneAccessStatus_];
+  else
+    [NSException raise:NSGenericException format:@"Invalid mediaType passed."];
+
+  return status;
+}
+
+- (NSString*)accessStateToString:(AccessState)accessState {
+  NSString* result = nil;
+  switch (accessState) {
+    case AccessStateGranted:
+      result = @"granted";
+      break;
+    case AccessStateDenied:
+      result = @"denied";
+      break;
+    case AccessStateRestricted:
+      result = @"restricted";
+      break;
+    case AccessStateUnknown:
+      result = @"unknown";
+      break;
+    default:
+      [NSException raise:NSGenericException format:@"Unexpected AccessState."];
+  }
+  return result;
 }
 
 @end
