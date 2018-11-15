@@ -5,6 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const { ipcRenderer, remote } = require('electron')
+const features = process.atomBinding('features')
 
 const isCI = remote.getGlobal('isCi')
 
@@ -111,7 +112,12 @@ describe('node feature', () => {
         if (child != null) child.kill()
       })
 
-      it('supports spawning Electron as a node process via the ELECTRON_RUN_AS_NODE env var', (done) => {
+      it('supports spawning Electron as a node process via the ELECTRON_RUN_AS_NODE env var', function (done) {
+        if (!features.isRunAsNodeEnabled()) {
+          this.skip()
+          done()
+        }
+
         child = ChildProcess.spawn(process.execPath, [path.join(__dirname, 'fixtures', 'module', 'run-as-node.js')], {
           env: {
             ELECTRON_RUN_AS_NODE: true
@@ -213,7 +219,12 @@ describe('node feature', () => {
       if (child !== null) child.kill()
     })
 
-    it('supports starting the v8 inspector with --inspect/--inspect-brk', (done) => {
+    it('supports starting the v8 inspector with --inspect/--inspect-brk', function (done) {
+      if (!features.isRunAsNodeEnabled()) {
+        this.skip()
+        done()
+      }
+
       child = ChildProcess.spawn(process.execPath, ['--inspect-brk', path.join(__dirname, 'fixtures', 'module', 'run-as-node.js')], {
         env: {
           ELECTRON_RUN_AS_NODE: true
@@ -240,7 +251,12 @@ describe('node feature', () => {
       child.stdout.on('data', outDataHandler)
     })
 
-    it('supports js binding', (done) => {
+    it('supports js binding', function (done) {
+      if (!features.isRunAsNodeEnabled()) {
+        this.skip()
+        done()
+      }
+
       child = ChildProcess.spawn(process.execPath, ['--inspect', path.join(__dirname, 'fixtures', 'module', 'inspector-binding.js')], {
         env: {
           ELECTRON_RUN_AS_NODE: true

@@ -13,6 +13,8 @@ const remote = require('electron').remote
 const ipcMain = remote.require('electron').ipcMain
 const BrowserWindow = remote.require('electron').BrowserWindow
 
+const features = process.atomBinding('features')
+
 describe('asar package', function () {
   const fixtures = path.join(__dirname, 'fixtures')
 
@@ -1043,6 +1045,11 @@ describe('asar package', function () {
       })
 
       it('disables asar support in spawned processes', function (done) {
+        if (!features.isRunAsNodeEnabled()) {
+          this.skip()
+          done()
+        }
+
         const spawned = ChildProcess.spawn(process.execPath, [path.join(__dirname, 'fixtures', 'module', 'no-asar.js')], {
           env: {
             ELECTRON_NO_ASAR: true,
