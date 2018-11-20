@@ -59,44 +59,8 @@
   return self;
 }
 
-// pops up an alert to change mic prefs (restart required to take effect)
-- (void)alertForMicrophoneAccess {
-  if (microphoneAccessStatus_ == AccessStateDenied) {
-    NSAlert* alert = [[NSAlert alloc] init];
-    alert.alertStyle = NSAlertStyleWarning;
-    alert.messageText = @"This app needs access to the microphone.";
-    [alert addButtonWithTitle:@"Change Preferences"];
-    [alert addButtonWithTitle:@"Cancel"];
-    NSInteger modalResponse = [alert runModal];
-    if (modalResponse == NSAlertFirstButtonReturn) {
-      [[NSWorkspace sharedWorkspace]
-          openURL:[NSURL
-                      URLWithString:@"x-apple.systempreferences:com.apple."
-                                    @"preference.security?Privacy_Microphone"]];
-    }
-  }
-}
-
-// pops up an alert to change camera prefs (restart required to take effect)
-- (void)alertForCameraAccess {
-  if (cameraAccessStatus_ == AccessStateDenied) {
-    NSAlert* alert = [[NSAlert alloc] init];
-    alert.alertStyle = NSAlertStyleWarning;
-    alert.messageText = @"This app needs access to the camera.";
-    [alert addButtonWithTitle:@"Change Preferences"];
-    [alert addButtonWithTitle:@"Cancel"];
-    NSInteger modalResponse = [alert runModal];
-    if (modalResponse == NSAlertFirstButtonReturn) {
-      [[NSWorkspace sharedWorkspace]
-          openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple."
-                                       @"preference.security?Privacy_Camera"]];
-    }
-  }
-}
-
-// requests camera/mic access from the user, optionally asking again if denied
-- (void)askForMediaAccess:(BOOL)askAgain
-               completion:(void (^)(BOOL))accessGranted {
+// requests camera/mic access from the user
+- (void)askForMediaAccess:(void (^)(BOOL))accessGranted {
   if (@available(macOS 10.14, *)) {
     [AVCaptureDevice
         requestAccessForMediaType:AVMediaTypeAudio
@@ -109,12 +73,6 @@
                                 cameraAccessStatus_ = (granted)
                                                           ? AccessStateGranted
                                                           : AccessStateDenied;
-                                if (askAgain) {
-                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                    [self alertForMicrophoneAccess];
-                                    [self alertForCameraAccess];
-                                  });
-                                }
                                 dispatch_async(dispatch_get_main_queue(), ^{
                                   accessGranted(self.hasFullMediaAccess);
                                 });
@@ -126,20 +84,14 @@
   }
 }
 
-// requests camera access from the user, optionally asking again if denied
-- (void)askForCameraAccess:(BOOL)askAgain
-                completion:(void (^)(BOOL))accessGranted {
+// requests camera access from the user
+- (void)askForCameraAccess:(void (^)(BOOL))accessGranted {
   if (@available(macOS 10.14, *)) {
     [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
                              completionHandler:^(BOOL granted) {
                                cameraAccessStatus_ = (granted)
                                                          ? AccessStateGranted
                                                          : AccessStateDenied;
-                               if (askAgain) {
-                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                   [self alertForCameraAccess];
-                                 });
-                               }
                                dispatch_async(dispatch_get_main_queue(), ^{
                                  accessGranted(self.hasCameraAccess);
                                });
@@ -150,20 +102,14 @@
   }
 }
 
-// requests mic access from the user, optionally asking again if denied
-- (void)askForMicrophoneAccess:(BOOL)askAgain
-                    completion:(void (^)(BOOL))accessGranted {
+// requests mic access from the user
+- (void)askForMicrophoneAccess:(void (^)(BOOL))accessGranted {
   if (@available(macOS 10.14, *)) {
     [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio
                              completionHandler:^(BOOL granted) {
                                microphoneAccessStatus_ =
                                    (granted) ? AccessStateGranted
                                              : AccessStateDenied;
-                               if (askAgain) {
-                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                   [self alertForMicrophoneAccess];
-                                 });
-                               }
                                dispatch_async(dispatch_get_main_queue(), ^{
                                  accessGranted(self.hasMicrophoneAccess);
                                });
