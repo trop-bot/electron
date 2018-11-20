@@ -363,8 +363,8 @@ void SystemPreferences::SetUserDefault(const std::string& name,
 
 // whether the system has access to both microphone and camera
 std::string SystemPreferences::GetMediaAccessStatus(
-    const std::string& mediaType) {
-  NSString* type = [NSString stringWithFormat:@"%s", mediaType.c_str()];
+    const std::string& media_type) {
+  NSString* type = [NSString stringWithFormat:@"%s", media_type.c_str()];
 
   NSString* status = [[AtomAccessController sharedController]
       getMediaAccessStatusForType:type];
@@ -374,30 +374,26 @@ std::string SystemPreferences::GetMediaAccessStatus(
 // ask for access to camera and/or microphone
 v8::Local<v8::Promise> SystemPreferences::AskForMediaAccess(
     v8::Isolate* isolate,
-    mate::Arguments* args) {
+    const std::string& media_type) {
   scoped_refptr<util::Promise> promise = new util::Promise(isolate);
-  std::string media_type;
 
-  if (args->GetNext(&media_type)) {
-    if (media_type == "microphone")
-      [[AtomAccessController sharedController]
-          askForMicrophoneAccess:^(BOOL granted) {
-            promise->Resolve(granted == YES);
-          }];
-    else if (media_type == "camera") {
-      [[AtomAccessController sharedController]
-          askForCameraAccess:^(BOOL granted) {
-            promise->Resolve(granted == YES);
-          }];
-    } else if (media_type == "all") {
-      [[AtomAccessController sharedController]
-          askForMediaAccess:^(BOOL granted) {
-            promise->Resolve(granted == YES);
-          }];
-    } else {
-      promise->RejectWithErrorMessage(
-          "Invalid media type, use 'camera', 'microphone', or 'all'.");
-    }
+  if (media_type == "microphone") {
+    [[AtomAccessController sharedController]
+        askForMicrophoneAccess:^(BOOL granted) {
+          promise->Resolve(granted == YES);
+        }];
+  } else if (media_type == "camera") {
+    [[AtomAccessController sharedController]
+        askForCameraAccess:^(BOOL granted) {
+          promise->Resolve(granted == YES);
+        }];
+  } else if (media_type == "all") {
+    [[AtomAccessController sharedController] askForMediaAccess:^(BOOL granted) {
+      promise->Resolve(granted == YES);
+    }];
+  } else {
+    promise->RejectWithErrorMessage(
+        "Invalid media type, use 'camera', 'microphone', or 'all'.");
   }
   return promise->GetHandle();
 }
