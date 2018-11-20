@@ -387,10 +387,6 @@ v8::Local<v8::Promise> SystemPreferences::AskForMediaAccess(
         askForCameraAccess:^(BOOL granted) {
           promise->Resolve(granted == YES);
         }];
-  } else if (media_type == "all") {
-    [[AtomAccessController sharedController] askForMediaAccess:^(BOOL granted) {
-      promise->Resolve(granted == YES);
-    }];
   } else {
     promise->RejectWithErrorMessage(
         "Invalid media type, use 'camera', 'microphone', or 'all'.");

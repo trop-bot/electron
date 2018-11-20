@@ -21,11 +21,9 @@ typedef NS_ENUM(NSInteger, AccessState) {
 
 + (instancetype)sharedController;
 
-- (void)askForMediaAccess:(void (^)(BOOL))accessGranted;
 - (void)askForMicrophoneAccess:(void (^)(BOOL))accessGranted;
 - (void)askForCameraAccess:(void (^)(BOOL))accessGranted;
 
-- (BOOL)hasFullMediaAccess;
 - (BOOL)hasCameraAccess;
 - (BOOL)hasMicrophoneAccess;
 
