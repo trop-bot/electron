@@ -378,35 +378,26 @@ v8::Local<v8::Promise> SystemPreferences::AskForMediaAccess(
   scoped_refptr<util::Promise> promise = new util::Promise(isolate);
   std::string media_type;
 
-  bool ask_again = false;
-  if (!args->GetNext(&ask_again)) {
-    promise->RejectWithErrorMessage("askAgain value is required");
-    return promise->GetHandle();
-  }
-
   if (args->GetNext(&media_type)) {
     if (media_type == "microphone")
       [[AtomAccessController sharedController]
-          askForMicrophoneAccess:ask_again
-                      completion:^(BOOL granted) {
-                        promise->Resolve(granted == YES);
-                      }];
+          askForMicrophoneAccess:^(BOOL granted) {
+            promise->Resolve(granted == YES);
+          }];
     else if (media_type == "camera") {
       [[AtomAccessController sharedController]
-          askForCameraAccess:ask_again
-                  completion:^(BOOL granted) {
-                    promise->Resolve(granted == YES);
-                  }];
+          askForCameraAccess:^(BOOL granted) {
+            promise->Resolve(granted == YES);
+          }];
+    } else if (media_type == "all") {
+      [[AtomAccessController sharedController]
+          askForMediaAccess:^(BOOL granted) {
+            promise->Resolve(granted == YES);
+          }];
     } else {
       promise->RejectWithErrorMessage(
-          "Invalid media type, use 'camera' or 'microphone'.");
+          "Invalid media type, use 'camera', 'microphone', or 'all'.");
     }
-  } else {
-    [[AtomAccessController sharedController]
-        askForMediaAccess:ask_again
-               completion:^(BOOL granted) {
-                 promise->Resolve(granted == YES);
-               }];
   }
   return promise->GetHandle();
 }
