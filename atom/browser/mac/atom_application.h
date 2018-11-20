@@ -6,13 +6,6 @@
 #include "base/mac/scoped_nsobject.h"
 #include "base/mac/scoped_sending_event.h"
 
-// Forward Declare Appearance APIs
-@interface NSApplication (HighSierraSDK)
-@property(copy, readonly)
-    NSAppearance* effectiveAppearance API_AVAILABLE(macosx(10.14));
-@property(copy, readonly) NSAppearance* appearance API_AVAILABLE(macosx(10.14));
-- (void)setAppearance:(NSAppearance*)appearance API_AVAILABLE(macosx(10.14));
-
 // forward declare Access APIs
 typedef enum AVAuthorizationStatus : NSInteger {
   AVAuthorizationStatusNotDetermined,
@@ -20,7 +13,15 @@ typedef enum AVAuthorizationStatus : NSInteger {
   AVAuthorizationStatusDenied,
   AVAuthorizationStatusAuthorized
 } AVAuthorizationStatus API_AVAILABLE(macosx(10.14));
+
 typedef NSString* AVMediaType API_AVAILABLE(macosx(10.14));
+
+// Forward Declare Appearance APIs
+@interface NSApplication (HighSierraSDK)
+@property(copy, readonly)
+    NSAppearance* effectiveAppearance API_AVAILABLE(macosx(10.14));
+@property(copy, readonly) NSAppearance* appearance API_AVAILABLE(macosx(10.14));
+- (void)setAppearance:(NSAppearance*)appearance API_AVAILABLE(macosx(10.14));
 
 - (void)requestAccessForMediaType:(AVMediaType)mediaType
                 completionHandler:(void (^)(BOOL granted))handler
