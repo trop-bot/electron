@@ -59,31 +59,6 @@
   return self;
 }
 
-// requests camera/mic access from the user
-- (void)askForMediaAccess:(void (^)(BOOL))accessGranted {
-  if (@available(macOS 10.14, *)) {
-    [AVCaptureDevice
-        requestAccessForMediaType:AVMediaTypeAudio
-                completionHandler:^(BOOL granted) {
-                  microphoneAccessStatus_ =
-                      (granted) ? AccessStateGranted : AccessStateDenied;
-                  [AVCaptureDevice
-                      requestAccessForMediaType:AVMediaTypeVideo
-                              completionHandler:^(BOOL granted) {
-                                cameraAccessStatus_ = (granted)
-                                                          ? AccessStateGranted
-                                                          : AccessStateDenied;
-                                dispatch_async(dispatch_get_main_queue(), ^{
-                                  accessGranted(self.hasFullMediaAccess);
-                                });
-                              }];
-                }];
-  } else {
-    // access always allowed pre-10.14 Mojave
-    accessGranted(self.hasFullMediaAccess);
-  }
-}
-
 // requests camera access from the user
 - (void)askForCameraAccess:(void (^)(BOOL))accessGranted {
   if (@available(macOS 10.14, *)) {
@@ -132,11 +107,6 @@
   if (@available(macOS 10.14, *))
     return (microphoneAccessStatus_ == AccessStateGranted);
   return YES;
-}
-
-// whether or not the user has given consent for mic access
-- (BOOL)hasFullMediaAccess {
-  return (self.hasCameraAccess && self.hasMicrophoneAccess);
 }
 
 - (NSString*)getMediaAccessStatusForType:(NSString*)mediaType {
