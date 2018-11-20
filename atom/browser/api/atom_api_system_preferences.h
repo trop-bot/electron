@@ -91,9 +91,11 @@ class SystemPreferences : public mate::EventEmitter<SystemPreferences>
   void RemoveUserDefault(const std::string& name);
   bool IsSwipeTrackingFromScrollEventsEnabled();
 
-  std::string GetMediaAccessStatus(const std::string& mediaType);
+  // TODO(codebytere): Write tests for these methods once we
+  // are running tests on a Mojave machine
+  std::string GetMediaAccessStatus(const std::string& media_type);
   v8::Local<v8::Promise> AskForMediaAccess(v8::Isolate* isolate,
-                                           mate::Arguments* args);
+                                           const std::string& media_type);
 
   // TODO(MarshallOfSound): Write tests for these methods once we
   // are running tests on a Mojave machine
