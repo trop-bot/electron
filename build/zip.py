@@ -23,7 +23,7 @@ def skip_path(dep, dist_zip, target_cpu):
   should_skip = (
     any(dep.startswith(path) for path in PATHS_TO_SKIP) or
     any(dep.endswith(ext) for ext in EXTENSIONS_TO_SKIP) or
-    'arm' in target_cpu and dist_zip == 'mksnapshot.zip' and dep == 'snapshot_blob.bin')
+    ('arm' in target_cpu and dist_zip == 'mksnapshot.zip' and dep == 'snapshot_blob.bin'))
   if should_skip:
     print("Skipping {}".format(dep))
   return should_skip

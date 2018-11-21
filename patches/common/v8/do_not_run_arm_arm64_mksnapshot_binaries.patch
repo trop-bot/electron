@@ -21,10 +21,10 @@ index b1194e4b828e66d8d09fac57481efe313031f3ac..c256945650c24324c28a2e17fb299a1d
      ]
  
 +    if (v8_snapshot_toolchain == "//build/toolchain/linux:clang_arm" ||
-+          v8_snapshot_toolchain == "//build/toolchain/linux:clang_arm64") {
-+        public_deps += [
-+          ":mksnapshot($v8_snapshot_toolchain)",
-+        ]
++        v8_snapshot_toolchain == "//build/toolchain/linux:clang_arm64") {
++      public_deps += [
++        ":mksnapshot($v8_snapshot_toolchain)",
++      ]
 +    } else {
 +      public_deps += [
 +        ":run_mksnapshot_default",
