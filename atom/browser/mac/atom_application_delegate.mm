@@ -5,7 +5,7 @@
 #import "atom/browser/mac/atom_application_delegate.h"
 
 #include "atom/browser/browser.h"
-#import "atom/browser/mac/atom_application.h"
+#include "atom/browser/mac/atom_application.h"
 #include "atom/browser/mac/dict_util.h"
 #include "base/allocator/allocator_shim.h"
 #include "base/allocator/buildflags.h"
