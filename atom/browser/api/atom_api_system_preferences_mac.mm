@@ -15,6 +15,10 @@
 #include "base/values.h"
 #include "net/base/mac/url_conversions.h"
 
+#if defined(OS_MACOSX)
+#include "base/mac/mac_util.h"
+#endif
+
 namespace atom {
 
 namespace api {
