@@ -14,6 +14,7 @@
 #include "native_mate/dictionary.h"
 
 #include "atom/common/node_includes.h"
+#include "atom/common/platform_util.h"
 
 #if defined(OS_MACOSX)
 #include "base/mac/mac_util.h"
@@ -25,7 +26,7 @@ namespace {
 
 #if defined(OS_MACOSX)
 bool RegisteringMediaKeyForUntrustedClient(const ui::Accelerator& accelerator) {
-  if (base::mac::IsAtLeastOS10_14()) {
+  if (platform_util::IsAtLeastOS10_14()) {
     constexpr ui::KeyboardCode mediaKeys[] = {
         ui::VKEY_MEDIA_PLAY_PAUSE, ui::VKEY_MEDIA_NEXT_TRACK,
         ui::VKEY_MEDIA_PREV_TRACK, ui::VKEY_MEDIA_STOP};
