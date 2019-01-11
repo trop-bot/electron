@@ -107,7 +107,7 @@ hooks = [
     'action': [
       'python',
       '-c',
-      'import os; os.chdir("src"); os.chdir("electron"); os.system("npm install")',
+      'import os; os.chdir("src"); os.chdir("electron"); exit_code = os.system("npm instal"); import sys; sys.exit(exit_code)',
     ],
   },
   {
