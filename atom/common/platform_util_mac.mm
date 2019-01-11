@@ -20,7 +20,7 @@
 #include "base/strings/stringprintf.h"
 #include "base/strings/sys_string_conversions.h"
 #include "net/base/mac/url_conversions.h"
-#include "third_party/blink/renderer/platform/mac/version_util_mac.h"
+#include "third_party/WebKit/Source/platform/mac/VersionUtilMac.h"
 #include "url/gurl.h"
 
 namespace {
@@ -170,7 +170,7 @@ void OpenExternal(const GURL& url,
 }
 
 bool IsAtLeastOS10_14() {
-  return MacOSXMinorVersion() >= 14;
+  return blink::internal::MacOSXMinorVersion()
 }
 
 bool MoveItemToTrash(const base::FilePath& full_path) {
