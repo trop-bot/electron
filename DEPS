@@ -107,7 +107,7 @@ hooks = [
     'action': [
       'python',
       '-c',
-      'import os, sys; os.chdir("src"); os.chdir("electron"); exit_code = os.system("npm install"); sys.exit(exit_code)',
+      'import os, subprocess; os.chdir("src"); os.chdir("electron"); subprocess.check_call(["npm", "install"]);',
     ],
   },
   {
@@ -117,7 +117,7 @@ hooks = [
     'action': [
       'python',
       '-c',
-      'import os; os.chdir("src"); os.chdir("electron"); os.chdir("vendor"); os.chdir("boto"); os.system("python setup.py build");',
+      'import os, subprocess; os.chdir("src"); os.chdir("electron"); os.chdir("vendor"); os.chdir("boto"); subprocess.check_call(["python", "setup.py", "build"]);',
     ],
   },
   {
@@ -127,7 +127,7 @@ hooks = [
     'action': [
       'python',
       '-c',
-      'import os; os.chdir("src"); os.chdir("electron"); os.chdir("vendor"); os.chdir("requests"); os.system("python setup.py build");',
+      'import os; os.chdir("src"); os.chdir("electron"); os.chdir("vendor"); os.chdir("requests"); subprocess.check_call(["python", "setup.py", "build"]);',
     ],
   }
 ]
