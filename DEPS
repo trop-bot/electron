@@ -107,7 +107,7 @@ hooks = [
     'action': [
       'python',
       '-c',
-      'import os, subprocess, sys; os.chdir(os.path.join("src", "electron")); npm = "npm.cmd" if sys.platform == "win32" else "npm"; subprocess.check_call([npm, "install"]);',
+      'import os, subprocess, sys; os.chdir(os.path.join("src", "electron")); npm = "npm.cmd" if sys.platform == "win32" else "npm"; subprocess.check_call([npm, "instal"]);',
     ],
   },
   {
