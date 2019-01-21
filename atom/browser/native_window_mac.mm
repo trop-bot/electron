@@ -1100,19 +1100,20 @@ void NativeWindowMac::SetProgressBar(double progress,
   // For the first time API invoked, we need to create a ContentView in
   // DockTile.
   if (first_time) {
-    NSImageView* image_view = [[NSImageView alloc] init];
+    base::scoped_nsobject<NSImageView> image_view([[NSImageView alloc] init]);
     [image_view setImage:[NSApp applicationIconImage]];
-    [dock_tile setContentView:image_view];
+    [dock_tile setContentView:image_view.autorelease()];
 
-    NSProgressIndicator* progress_indicator = [[AtomProgressBar alloc]
-        initWithFrame:NSMakeRect(0.0f, 0.0f, dock_tile.size.width, 15.0)];
+    base::scoped_nsobject<NSProgressIndicator> progress_indicator(
+        [[AtomProgressBar alloc]
+            initWithFrame:NSMakeRect(0.0f, 0.0f, dock_tile.size.width, 15.0)]);
     [progress_indicator setStyle:NSProgressIndicatorBarStyle];
     [progress_indicator setIndeterminate:NO];
     [progress_indicator setBezeled:YES];
     [progress_indicator setMinValue:0];
     [progress_indicator setMaxValue:1];
     [progress_indicator setHidden:NO];
-    [dock_tile.contentView addSubview:progress_indicator];
+    [dock_tile.contentView addSubview:progress_indicator.autorelease()];
   }
 
   NSProgressIndicator* progress_indicator = static_cast<NSProgressIndicator*>(
