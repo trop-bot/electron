@@ -1367,7 +1367,7 @@ Returns `String` - The architecture of the running operating system.
 
 Returns `String` - The CPU model name of the system.
 
-**NOTE:** If it can not be figured out, an empty string is returned.
+**NOTE:** If it can not be determined, an empty string is returned.
 
 ### `app.sysInfo.vmAllocationGranularity()`
 
