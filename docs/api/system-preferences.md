@@ -380,6 +380,12 @@ You can use the `setAppLevelAppearance` API to set this value.
 Sets the appearance setting for your application, this should override the
 system default and override the value of `getEffectiveAppearance`.
 
+### `systemPreferences.isTouchIDAvailable()` _macOS_
+
+Returns `Boolean` - whether or not this device has the ability to use Touch ID.
+
+**NOTE:** This API is only available on macOS Sierra 10.12.1 or newer.
+
 ### `systemPreferences.promptTouchID(reason)` _macOS_
 
 * `reason` String - The reason you are asking for Touch ID authentication
@@ -393,6 +399,8 @@ systemPreferences.promptTouchID('To get consent for In-App Purchase').then(succe
   console.log('You have successfully authenticated with Touch ID!')
 })
 ```
+
+**NOTE:** This API is only available on macOS Sierra 10.12.1 or newer.
 
 ### `systemPreferences.isTrustedAccessibilityClient(prompt)` _macOS_
 

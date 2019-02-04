@@ -443,6 +443,13 @@ std::string SystemPreferences::GetSystemColor(const std::string& color,
   }
 }
 
+bool SystemPreferences::IsTouchIDAvailable() {
+  base::scoped_nsobject<LAContext> context([[LAContext alloc] init]);
+  return
+      [context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
+                           error:nil];
+}
+
 void OnTouchIDCompleted(scoped_refptr<util::Promise> promise, bool success) {
   promise->Resolve(success);
 }
