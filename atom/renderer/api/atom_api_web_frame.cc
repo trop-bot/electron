@@ -344,6 +344,40 @@ void WebFrame::SetIsolatedWorldHumanReadableName(int world_id,
       world_id, blink::WebString::FromUTF8(name));
 }
 
+void WebFrame::SetIsolatedWorldInfo(int world_id, mate::Arguments* args) {
+  if (args->Length() < 1) {
+    args->ThrowError("Invalid args");
+    return;
+  }
+
+  v8::Local<v8::Value> val;
+  args->GetNext(&val);
+
+  mate::Dictionary options;
+  if (!mate::ConvertFromV8(args->isolate(), val, &options)) {
+    args->ThrowError("Must pass valid object");
+    return;
+  }
+
+  std::string origin, csp, name;
+  options.Get("securityOrigin", &origin);
+  options.Get("csp", &csp);
+  options.Get("name", &name);
+
+  if (!csp.empty() && origin.empty()) {
+    args->ThrowError(
+        "If csp is spicified, securityOrigin should also be specified");
+    return;
+  }
+
+  if (!origin.empty())
+    SetIsolatedWorldSecurityOrigin(world_id, origin);
+  if (!csp.empty())
+    SetIsolatedWorldContentSecurityPolicy(world_id, csp);
+  if (!name.empty())
+    SetIsolatedWorldHumanReadableName(world_id, name);
+}
+
 // static
 mate::Handle<WebFrame> WebFrame::Create(v8::Isolate* isolate) {
   return mate::CreateHandle(isolate, new WebFrame(isolate));
@@ -478,12 +512,13 @@ void WebFrame::BuildPrototype(v8::Isolate* isolate,
       .SetMethod("executeJavaScript", &WebFrame::ExecuteJavaScript)
       .SetMethod("executeJavaScriptInIsolatedWorld",
                  &WebFrame::ExecuteJavaScriptInIsolatedWorld)
-      .SetMethod("setIsolatedWorldSecurityOrigin",
+      .SetMethod("_setIsolatedWorldSecurityOrigin",
                  &WebFrame::SetIsolatedWorldSecurityOrigin)
-      .SetMethod("setIsolatedWorldContentSecurityPolicy",
+      .SetMethod("_setIsolatedWorldContentSecurityPolicy",
                  &WebFrame::SetIsolatedWorldContentSecurityPolicy)
-      .SetMethod("setIsolatedWorldHumanReadableName",
+      .SetMethod("_setIsolatedWorldHumanReadableName",
                  &WebFrame::SetIsolatedWorldHumanReadableName)
+      .SetMethod("setIsolatedWorldInfo", &WebFrame::SetIsolatedWorldInfo)
       .SetMethod("getResourceUsage", &WebFrame::GetResourceUsage)
       .SetMethod("clearCache", &WebFrame::ClearCache)
       .SetMethod("getFrameForSelector", &WebFrame::GetFrameForSelector)
