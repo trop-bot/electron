@@ -366,16 +366,13 @@ void WebFrame::SetIsolatedWorldInfo(int world_id, mate::Arguments* args) {
 
   if (!csp.empty() && origin.empty()) {
     args->ThrowError(
-        "If csp is spicified, securityOrigin should also be specified");
+        "If csp is specified, securityOrigin should also be specified");
     return;
   }
 
-  if (!origin.empty())
-    SetIsolatedWorldSecurityOrigin(world_id, origin);
-  if (!csp.empty())
-    SetIsolatedWorldContentSecurityPolicy(world_id, csp);
-  if (!name.empty())
-    SetIsolatedWorldHumanReadableName(world_id, name);
+  SetIsolatedWorldSecurityOrigin(world_id, origin);
+  SetIsolatedWorldContentSecurityPolicy(world_id, csp);
+  SetIsolatedWorldHumanReadableName(world_id, name);
 }
 
 // static
