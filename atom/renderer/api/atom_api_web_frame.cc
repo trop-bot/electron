@@ -350,9 +350,6 @@ void WebFrame::SetIsolatedWorldInfo(int world_id, mate::Arguments* args) {
     return;
   }
 
-  v8::Local<v8::Value> val;
-  args->GetNext(&val);
-
   mate::Dictionary options;
   if (!args->GetNext(&options)) {
     args->ThrowError("Must pass valid object");
