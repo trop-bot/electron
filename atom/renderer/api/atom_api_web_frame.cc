@@ -344,18 +344,9 @@ void WebFrame::SetIsolatedWorldHumanReadableName(int world_id,
       world_id, blink::WebString::FromUTF8(name));
 }
 
-void WebFrame::SetIsolatedWorldInfo(int world_id, mate::Arguments* args) {
-  if (args->Length() < 1) {
-    args->ThrowError("Invalid args");
-    return;
-  }
-
-  mate::Dictionary options;
-  if (!args->GetNext(&options)) {
-    args->ThrowError("Must pass valid object");
-    return;
-  }
-
+void WebFrame::SetIsolatedWorldInfo(int world_id,
+                                    const mate::Dictionary& options,
+                                    mate::Arguments* args) {
   std::string origin, csp, name;
   options.Get("securityOrigin", &origin);
   options.Get("csp", &csp);
