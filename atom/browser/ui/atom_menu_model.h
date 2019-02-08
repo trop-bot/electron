@@ -27,7 +27,7 @@ class AtomMenuModel : public ui::SimpleMenuModel {
     virtual bool ShouldRegisterAcceleratorForCommandId(
         int command_id) const = 0;
 
-    virtual bool IsCommandIdWorksWhenHidden(int command_id) const = 0;
+    virtual bool ShouldCommandIdWorkWhenHidden(int command_id) const = 0;
 
    private:
     // ui::SimpleMenuModel::Delegate:
