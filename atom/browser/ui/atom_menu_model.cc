@@ -53,7 +53,7 @@ bool AtomMenuModel::ShouldRegisterAcceleratorAt(int index) const {
 
 bool AtomMenuModel::IsWorksWhenHiddenAt(int index) const {
   if (delegate_) {
-    return delegate_->IsCommandIdWorksWhenHidden(GetCommandIdAt(index));
+    return delegate_->ShouldCommandIdWorkWhenHidden(GetCommandIdAt(index));
   }
   return true;
 }
