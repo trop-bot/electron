@@ -40,7 +40,7 @@ void Menu::AfterInit(v8::Isolate* isolate) {
   delegate.Get("isCommandIdChecked", &is_checked_);
   delegate.Get("isCommandIdEnabled", &is_enabled_);
   delegate.Get("isCommandIdVisible", &is_visible_);
-  delegate.Get("isCommandIdWorksWhenHidden", &is_works_when_hidden_);
+  delegate.Get("shouldCommandIdWorkWhenHidden", &is_works_when_hidden_);
   delegate.Get("getAcceleratorForCommandId", &get_accelerator_);
   delegate.Get("shouldRegisterAcceleratorForCommandId",
                &should_register_accelerator_);
@@ -66,7 +66,7 @@ bool Menu::IsCommandIdVisible(int command_id) const {
   return is_visible_.Run(GetWrapper(), command_id);
 }
 
-bool Menu::IsCommandIdWorksWhenHidden(int command_id) const {
+bool Menu::ShouldCommandIdWorkWhenHidden(int command_id) const {
   v8::Locker locker(isolate());
   v8::HandleScope handle_scope(isolate());
   return is_works_when_hidden_.Run(GetWrapper(), command_id);
