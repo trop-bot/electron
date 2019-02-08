@@ -286,6 +286,11 @@ static base::scoped_nsobject<NSMenu> recentDocumentsMenuSwap_;
       [item setKeyEquivalentModifierMask:modifier_mask];
     }
 
+    if (@available(macOS 10.13, *)) {
+      [(id)item
+          setAllowsKeyEquivalentWhenHidden:(model->IsWorksWhenHiddenAt(index))];
+    }
+
     // Set menu item's role.
     [item setTarget:self];
     if (!role.empty()) {
@@ -302,8 +307,7 @@ static base::scoped_nsobject<NSMenu> recentDocumentsMenuSwap_;
 }
 
 // Called before the menu is to be displayed to update the state (enabled,
-// radio, etc) of each item in the menu. Also will update the title if
-// the item is marked as "dynamic".
+// radio, etc) of each item in the menu.
 - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item {
   SEL action = [item action];
   if (action != @selector(itemSelected:))
