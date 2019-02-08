@@ -24,6 +24,7 @@ See [`Menu`](menu.md) for examples.
   * `icon` ([NativeImage](native-image.md) | String) (optional)
   * `enabled` Boolean (optional) - If false, the menu item will be greyed out and
     unclickable.
+  * `acceleratorWorksWhenHidden` Boolean (optional) - If true, the item will continue to work when it is not visible in the menu.
   * `visible` Boolean (optional) - If false, the menu item will be entirely hidden.
   * `checked` Boolean (optional) - Should only be specified for `checkbox` or `radio` type
     menu items.
