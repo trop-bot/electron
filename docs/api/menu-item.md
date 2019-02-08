@@ -24,7 +24,7 @@ See [`Menu`](menu.md) for examples.
   * `icon` ([NativeImage](native-image.md) | String) (optional)
   * `enabled` Boolean (optional) - If false, the menu item will be greyed out and
     unclickable.
-  * `acceleratorWorksWhenHidden` Boolean (optional) - If true, the item will continue to work when it is not visible in the menu.
+  * `acceleratorWorksWhenHidden` Boolean (optional) - If true, the item will work when not visible in the menu. _macOS_
   * `visible` Boolean (optional) - If false, the menu item will be entirely hidden.
   * `checked` Boolean (optional) - Should only be specified for `checkbox` or `radio` type
     menu items.
@@ -48,6 +48,8 @@ See [`Menu`](menu.md) for examples.
   * `afterGroupContaining` String[] (optional) - Provides a means for a single context menu to declare
     the placement of their containing group after the containing group of the item
     with the specified label.
+
+**Note:** `acceleratorWorksWhenHidden` is specified as being macOS-only becuase the behavior it enables when `true` is the default on Windows and Linux.
 
 ### Roles
 
