@@ -219,6 +219,11 @@ static base::scoped_nsobject<NSMenu> recentDocumentsMenuSwap_;
     [item setSubmenu:submenu];
     [NSApp setServicesMenu:submenu];
   } else if (type == atom::AtomMenuModel::TYPE_SUBMENU) {
+    // We need to specifically check that the submenu top-level item has been
+    // enabled as it's not validated by validateUserInterfaceItem
+    if (!model->IsEnabledAt(index))
+      [item setEnabled:NO];
+
     // Recursively build a submenu from the sub-model at this index.
     [item setTarget:nil];
     [item setAction:nil];
