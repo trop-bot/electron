@@ -97,13 +97,13 @@ class Menu : public mate::TrackableObject<Menu>,
   bool IsItemCheckedAt(int index) const;
   bool IsEnabledAt(int index) const;
   bool IsVisibleAt(int index) const;
-  bool IsWorksWhenHiddenAt(int index) const;
+  bool WorksWhenHiddenAt(int index) const;
 
   // Stored delegate methods.
   base::Callback<bool(v8::Local<v8::Value>, int)> is_checked_;
   base::Callback<bool(v8::Local<v8::Value>, int)> is_enabled_;
   base::Callback<bool(v8::Local<v8::Value>, int)> is_visible_;
-  base::Callback<bool(v8::Local<v8::Value>, int)> is_works_when_hidden_;
+  base::Callback<bool(v8::Local<v8::Value>, int)> works_when_hidden_;
   base::Callback<v8::Local<v8::Value>(v8::Local<v8::Value>, int, bool)>
       get_accelerator_;
   base::Callback<bool(v8::Local<v8::Value>, int)> should_register_accelerator_;
