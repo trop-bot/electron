@@ -188,8 +188,8 @@ bool Menu::IsVisibleAt(int index) const {
   return model_->IsVisibleAt(index);
 }
 
-bool Menu::IsWorksWhenHiddenAt(int index) const {
-  return model_->IsWorksWhenHiddenAt(index);
+bool Menu::WorksWhenHiddenAt(int index) const {
+  return model_->WorksWhenHiddenAt(index);
 }
 
 void Menu::OnMenuWillClose() {
@@ -223,7 +223,7 @@ void Menu::BuildPrototype(v8::Isolate* isolate,
       .SetMethod("getAcceleratorTextAt", &Menu::GetAcceleratorTextAt)
       .SetMethod("isItemCheckedAt", &Menu::IsItemCheckedAt)
       .SetMethod("isEnabledAt", &Menu::IsEnabledAt)
-      .SetMethod("isWorksWhenHiddenAt", &Menu::IsWorksWhenHiddenAt)
+      .SetMethod("worksWhenHiddenAt", &Menu::WorksWhenHiddenAt)
       .SetMethod("isVisibleAt", &Menu::IsVisibleAt)
       .SetMethod("popupAt", &Menu::PopupAt)
       .SetMethod("closePopupAt", &Menu::ClosePopupAt);

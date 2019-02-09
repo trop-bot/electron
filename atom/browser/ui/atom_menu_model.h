@@ -59,7 +59,7 @@ class AtomMenuModel : public ui::SimpleMenuModel {
                                   bool use_default_accelerator,
                                   ui::Accelerator* accelerator) const;
   bool ShouldRegisterAcceleratorAt(int index) const;
-  bool IsWorksWhenHiddenAt(int index) const;
+  bool WorksWhenHiddenAt(int index) const;
 
   // ui::SimpleMenuModel:
   void MenuWillClose() override;
