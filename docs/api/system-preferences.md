@@ -390,7 +390,7 @@ Returns `Boolean` - whether or not this device has the ability to use Touch ID.
 
 * `reason` String - The reason you are asking for Touch ID authentication
 
-Returns `Promise<Boolean>` - whether ot not the user has successfully authenticated with Touch ID.
+Returns `Promise<void>` - resolves if the user has successfully authenticated with Touch ID.
 
 ```javascript
 const { systemPreferences } = require('electron')
