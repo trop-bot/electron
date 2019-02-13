@@ -620,9 +620,11 @@ if (is_mac) {
     output_name = electron_helper_name
     deps = [
       ":electron_framework+link",
-      "//sandbox/mac:seatbelt",
     ]
-    defines = [ "HELPER_EXECUTABLE" ]
+    if (!is_mas_build) {
+      deps += [ "//sandbox/mac:seatbelt" ]
+      defines = [ "ENABLE_SEATBELT" ]
+    }
     sources = filenames.app_sources
     include_dirs = [ "." ]
     info_plist = "atom/renderer/resources/mac/Info.plist"
