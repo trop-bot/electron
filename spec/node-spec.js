@@ -460,6 +460,13 @@ describe('node feature', () => {
       const iv = Buffer.from('fedcba9876543210', 'hex')
       require('crypto').createCipheriv('des-ede-cbc', key, iv)
     })
+
+    it('should not crash when creating an ECDH cipher', () => {
+      const crypto = require('crypto')
+      const dh = crypto.createECDH('prime256v1')
+      dh.generateKeys()
+      dh.setPrivateKey(dh.getPrivateKey())
+    })
   })
 
   it('includes the electron version in process.versions', () => {
