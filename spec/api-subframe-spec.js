@@ -8,8 +8,9 @@ const { closeWindow } = require('./window-helpers')
 const { BrowserWindow } = remote
 
 describe('renderer nodeIntegrationInSubFrames', () => {
-  const generateTests = (sandboxEnabled) => {
-    describe(`with sandbox ${sandboxEnabled ? 'enabled' : 'disabled'}`, () => {
+  const generateTests = (sandboxEnabled, insideWebview) => {
+    describe(`with sandbox ${sandboxEnabled ? 'enabled' : 'disabled'}${insideWebview ? ' inside a webview' : ''}`, () => {
+      const fixtureSuffix = insideWebview ? '-webview' : ''
       let w
 
       beforeEach(async () => {
@@ -20,7 +21,8 @@ describe('renderer nodeIntegrationInSubFrames', () => {
           height: 400,
           webPreferences: {
             sandbox: sandboxEnabled,
-            preload: path.resolve(__dirname, 'fixtures/sub-frames/preload.js'),
+            webviewTag: insideWebview,
+            preload: insideWebview ? false : path.resolve(__dirname, 'fixtures/sub-frames/preload.js'),
             nodeIntegrationInSubFrames: true
           }
         })
@@ -32,7 +34,7 @@ describe('renderer nodeIntegrationInSubFrames', () => {
 
       it('should load preload scripts in top level iframes', async () => {
         const detailsPromise = emittedNTimes(remote.ipcMain, 'preload-ran', 2)
-        w.loadFile(path.resolve(__dirname, 'fixtures/sub-frames/frame-container.html'))
+        w.loadFile(path.resolve(__dirname, `fixtures/sub-frames/frame-container${fixtureSuffix}.html`))
         const [event1, event2] = await detailsPromise
         expect(event1[0].frameId).to.not.equal(event2[0].frameId)
         expect(event1[0].frameId).to.equal(event1[2])
@@ -41,7 +43,7 @@ describe('renderer nodeIntegrationInSubFrames', () => {
 
       it('should load preload scripts in nested iframes', async () => {
         const detailsPromise = emittedNTimes(remote.ipcMain, 'preload-ran', 3)
-        w.loadFile(path.resolve(__dirname, 'fixtures/sub-frames/frame-with-frame-container.html'))
+        w.loadFile(path.resolve(__dirname, `fixtures/sub-frames/frame-with-frame-container${fixtureSuffix}.html`))
         const [event1, event2, event3] = await detailsPromise
         expect(event1[0].frameId).to.not.equal(event2[0].frameId)
         expect(event1[0].frameId).to.not.equal(event3[0].frameId)
@@ -53,7 +55,7 @@ describe('renderer nodeIntegrationInSubFrames', () => {
 
       it('should correctly reply to the main frame with using event.reply', async () => {
         const detailsPromise = emittedNTimes(remote.ipcMain, 'preload-ran', 2)
-        w.loadFile(path.resolve(__dirname, 'fixtures/sub-frames/frame-container.html'))
+        w.loadFile(path.resolve(__dirname, `fixtures/sub-frames/frame-container${fixtureSuffix}.html`))
         const [event1] = await detailsPromise
         const pongPromise = emittedOnce(remote.ipcMain, 'preload-pong')
         event1[0].reply('preload-ping')
@@ -63,7 +65,7 @@ describe('renderer nodeIntegrationInSubFrames', () => {
 
       it('should correctly reply to the sub-frames with using event.reply', async () => {
         const detailsPromise = emittedNTimes(remote.ipcMain, 'preload-ran', 2)
-        w.loadFile(path.resolve(__dirname, 'fixtures/sub-frames/frame-container.html'))
+        w.loadFile(path.resolve(__dirname, `fixtures/sub-frames/frame-container${fixtureSuffix}.html`))
         const [, event2] = await detailsPromise
         const pongPromise = emittedOnce(remote.ipcMain, 'preload-pong')
         event2[0].reply('preload-ping')
@@ -73,7 +75,7 @@ describe('renderer nodeIntegrationInSubFrames', () => {
 
       it('should correctly reply to the nested sub-frames with using event.reply', async () => {
         const detailsPromise = emittedNTimes(remote.ipcMain, 'preload-ran', 3)
-        w.loadFile(path.resolve(__dirname, 'fixtures/sub-frames/frame-with-frame-container.html'))
+        w.loadFile(path.resolve(__dirname, `fixtures/sub-frames/frame-with-frame-container${fixtureSuffix}.html`))
         const [,, event3] = await detailsPromise
         const pongPromise = emittedOnce(remote.ipcMain, 'preload-pong')
         event3[0].reply('preload-ping')
@@ -83,6 +85,8 @@ describe('renderer nodeIntegrationInSubFrames', () => {
     })
   }
 
-  generateTests(false)
-  generateTests(true)
+  generateTests(false, false)
+  generateTests(false, true)
+  generateTests(true, false)
+  generateTests(true, true)
 })
