@@ -12,7 +12,7 @@ vars = {
   'chromium_version':
     '73.0.3683.68',
   'node_version':
-    'd2bb4b9d2f38b49ed52f7f3e4bdd861078809216',
+    'f807d72614d4b8973d71548328be213532b46b1b',
 
   'boto_version': 'f7574aa6cc2c819430c1f05e9a1a1a666ef8169b',
   'pyyaml_version': '3.12',
